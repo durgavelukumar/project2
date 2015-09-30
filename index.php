@@ -16,10 +16,12 @@ ini_set('display_errors', 1); # Display errors on page (instead of a log file)
 <style>	
 	p.wr {
 	margin-top: 10px;
-	margin-bottom: 50px;
+	margin-bottom: 30px;
 	margin-right: 200px;
 	margin-left: 200px;
 }
+
+p {font-size: large;}
 </style>
 	<h1>Password Generator</h1>
 	
@@ -31,37 +33,45 @@ ini_set('display_errors', 1); # Display errors on page (instead of a log file)
 		preference. It is based on the concept that any potential attacker knows the algorithm but 
 		doesn't know the chosen password.</p>
 		
-	<?php
-         $numberofWords = 3;
-	    if (isset($_POST["numberofWords"]))
-		{
-			$numberofWords = $_POST["numberofWords"];
-		};
+	<div align="center">
+	<form method='POST' action='index.php'>
 		
-		$includeNumber = "Yes";
-	    if (isset($_POST["includeNumber"]))
-		{
-			$includeNumber = $_POST["includeNumber"];
-		};
+		Number of words:
+		<select name="numberofWords">
+			<option value="1">1</option>
+			<option value="2">2</option>
+			<option value="3">3</option>
+			<option value="4">4</option>
+			<option value="5">5</option>
+			<option value="6">6</option>
+			<option value="7">7</option>
+			<option value="8">8</option>       
+			<option value="9">9</option>
+		</select> <br />
+		<br />
 		
-		 $includeSymbol =  "Yes";
-	    if (isset($_POST["includeSymbol"]))
-		{
-			$includeSymbol = $_POST["includeSymbol"];
-		};
-?>	
-
-	<div style="width: 500px; margin: 100px auto 0 auto;">
-	<form method='POST' action='pro2.php'>
-		
-		Number of words (1-9):
-		<input type='text' name='numberofWords' value='<?php echo $numberofWords; ?>'/><br />
+		Choose Style: <br />
+		<input type ='radio' name='pwdStyle' value='LowerCase' onClick="submit();" CHECKED/>All words-lower case<br />
+		<input type ='radio' name='pwdStyle' value='UpperCase'>All words-upper case<br />
+		<input type ='radio' name='pwdStyle' value='CapWord'>Capitalize each word<br />
+		<br />
 		
 		Include number
 		<input type='checkbox' name='includeNumber' value='<?php echo $includeNumber; ?>' /><br />
-
-		Include symbol
-		<input type="checkbox" name="includeSymbol" value='<?php echo $includeSymbol; ?>' /><br />
+		<br />
+		
+		Number of symbols:
+		<select name="numberofSymbols">
+			<option value="0">0</option>
+			<option value="1">1</option>
+			<option value="2">2</option>			
+			<option value="3">3</option>
+			<option value="4">4</option>
+			<option value="5">5</option>
+		</select> <br />
+		<br />
+		
+		
  
 		<input type='submit' value='Give Password.' />
 
@@ -118,12 +128,21 @@ if (isset($_POST["numberofWords"])){
 	$randomWords = array_rand($words, $numberofWords);
 }
 
+if (isset($_POST["pwdStyle"])) {
+	$pwdStyle = $_POST["pwdStyle"];
+}
+
 $randomNumber = array_rand($numbers);
 
-$randomSymbol = array_rand($symbols);
+if (isset($_POST["numberofSymbols"])){
+	$numberofSymbols = $_POST["numberofSymbols"];
+	if (!($numberofSymbols == 0)) {
+			$randomSymbols = array_rand($symbols, $numberofSymbols);
+	}
+}
 ?>
 
-	<p class="wr">Your password: </p>
+	<p align="center">Your password: </p>
 
 <?php
 
@@ -131,35 +150,49 @@ $pwd = "";
 
 if (isset($_POST["numberofWords"])){
 	for ($i = 0; $i < $numberofWords; $i++) {
-
-		echo $words[$randomWords[$i]];
-		//$pwd = $pwd + $words[$randomWords[$i]];
-	
+		if ($numberofWords == 1){
+			if ($pwdStyle == 'UpperCase')
+				$pwd = $pwd . strtoupper($words[$randomWords]);
+			else if ($pwdStyle == 'LowerCase')
+				$pwd = $pwd . lcfirst($words[$randomWords]);
+			else if ($pwdStyle == 'CapWord')
+				$pwd = $pwd . ucfirst($words[$randomWords]);
+		}
+		else {
+			if ($pwdStyle == 'UpperCase')
+				$pwd = $pwd . strtoupper($words[$randomWords[$i]]);
+			else if ($pwdStyle == 'LowerCase')
+				$pwd = $pwd . lcfirst($words[$randomWords[$i]]);
+			else if ($pwdStyle == 'CapWord')
+				$pwd = $pwd . ucfirst($words[$randomWords[$i]]);
+		}
 		if ($i != ($numberofWords - 1))
 		{
-		echo "_";
-		//$pwd = $pwd + "_";
+		$pwd = $pwd . "_";
 		}
 	}
 
 if (isset($_POST['includeNumber'])) 
-	{
-		echo $numbers[$randomNumber]; 
-		//$pwd = $pwd + $numbers[$randomNumber]; 
+	{	
+		$pwd = $pwd . $numbers[$randomNumber]; 
 	}
 
-
-if (isset($_POST['includeSymbol'])) 
-	{
-		echo $symbols[$randomSymbol]; 
-		//$pwd = $pwd + $symbols[$randomSymbol]; 
-	}
+if (isset($_POST['numberofSymbols'])) 
+	if (!($numberofSymbols == 0)) {
+		for ($i = 0; $i < $numberofSymbols; $i++) {
+			if ($numberofSymbols == 1)
+				$pwd = $pwd . $symbols[$randomSymbols];
+			else
+				$pwd = $pwd . $symbols[$randomSymbols[$i]];
+		}
+	} //if 
 	
-	//echo $pwd;
 } //isset
 
 ?>
-	
 
+<p class="pwd"><?php echo $pwd; ?></p>
+	
+	
 </body>
 </html>

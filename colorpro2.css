@@ -15,10 +15,13 @@ input[type=text] {
 input[type=submit] {
     border: 1px solid #f44c0e;
     padding: 10px 20px;
-    border-radius: 3px;
+    borderadius: 3px;
 }
 
-form{
-   margin: 0 auto;
-   width: 250 px;
+p.pwd {
+text-align: center;
+font: bold 20px arial, sans-serif;
+color: rgb(0,0,255);
 }
+
+
